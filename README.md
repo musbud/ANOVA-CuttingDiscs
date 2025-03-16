@@ -1,1 +1,1 @@
-# ANOVA-Cutting-Discs
+# ANOVA-CuttingDiscs
