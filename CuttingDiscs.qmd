@@ -1,5 +1,8 @@
 ---
 title: "Investigation of cutting discs via ANOVA"
+format: 
+  html: 
+    embed-resources: true
 ---
 
 # Intro
