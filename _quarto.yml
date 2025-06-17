@@ -1,5 +1,27 @@
 project:
-  title: "CuttingDiscs"
+  type: website
+  output-dir: docs
+  
+website:
+  title: "Investigation of cutting discs efficiency via ANOVA"
+  navbar:
+    left:
+      - href: CuttingDiscs.qmd
+        #text: Home
+      #- projects.qmd
+    tools:
+      - icon: github
+        href: https://github.com/musbud/ANOVA-CuttingDiscs
+  page-footer:
+    right: "Built with [Quarto](https://quarto.org/)"
+    left: "&copy; Copyright 2025, Mustafa Budak"
+
+format:
+  html:
+    theme: cerulean
+    toc: true
+
+editor: source
 
 
 

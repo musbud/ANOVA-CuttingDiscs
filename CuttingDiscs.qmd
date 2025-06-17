@@ -1,8 +1,13 @@
 ---
-title: "Investigation of cutting discs via ANOVA"
+#title: "Investigation of cutting discs via ANOVA"
 format: 
   html: 
     embed-resources: true
+
+about:
+  id: me
+  template: broadside
+  image: img/profile.png
 ---
 
 # Intro
