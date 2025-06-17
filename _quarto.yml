@@ -6,9 +6,9 @@ website:
   title: "Investigation of cutting discs efficiency via ANOVA"
   navbar:
     left:
-      - href: CuttingDiscs.qmd
+      - href: index.qmd
         #text: Home
-      #- projects.qmd
+      #- CuttingDiscs.qmd
     tools:
       - icon: github
         href: https://github.com/musbud/ANOVA-CuttingDiscs
