@@ -3,7 +3,7 @@ project:
   output-dir: docs
   
 website:
-  title: "Investigation"
+  title: "Investigation of cutting discs efficiency via ANOVA"
   navbar:
     left:
       - href: CuttingDiscs.qmd
