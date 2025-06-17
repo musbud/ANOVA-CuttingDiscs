@@ -1,5 +1,5 @@
 ---
-title: "Investigation of cutting discs via ANOVA"
+title: "Investigation of of cutting discs via ANOVA"
 format: 
   html: 
     embed-resources: true
