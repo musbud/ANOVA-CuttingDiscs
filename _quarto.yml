@@ -3,11 +3,11 @@ project:
   output-dir: docs
   
 website:
-  #title: "Investigation of cutting discs efficiency via ANOVA"
+  title: "Power of ANalysis Of VAriances in steel industry"
   navbar:
     left:
       - href: index.qmd
-        #text: Home
+        text: HOME
       #- CuttingDiscs.qmd
     tools:
       - icon: github
