@@ -17,3 +17,7 @@ The effect of following parameters (x-values) will be investigate on the efficie
 -   Area of the steel bars
 
 -   Diameter of the steel bars
+
+Above are R/Rstudio/Quarto files to reproduce the ANOVA by yourself.
+
+I have also create a website, which shows the results of ANOVA (at the top right of this page, have a look) 
