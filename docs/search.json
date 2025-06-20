@@ -12,19 +12,5 @@
     "title": "Investigation of cutting discs efficiency via ANOVA",
     "section": "Visualize post-hoc results",
     "text": "Visualize post-hoc results\n\n\n\n\n\n\n\n\nFigure 3: Post-Hoc results"
-  },
-  {
-    "objectID": "CuttingDiscs.html",
-    "href": "CuttingDiscs.html",
-    "title": "Intro",
-    "section": "",
-    "text": "Hot rolled steel bars have to cutted in certain customer needed lenght. Different cutting disc types can be applied for this process. We are going to try - by means of ANOVA - to figure out, which of three selected cutting discs have the best efficiency / lifetime.\nThe effect of following parameters (x-values) will be investigate on the efficiency (y-value) of cutting discs:\n\nDisc type\nSteel bar temperature\nCircumferential speed of cutting machine\nFeed speed of cutting machine\nCarbon content of the steel bars\nArea of the steel bars\nDiameter of the steel bars"
-  },
-  {
-    "objectID": "CuttingDiscs.html#visualize-post-hoc-results",
-    "href": "CuttingDiscs.html#visualize-post-hoc-results",
-    "title": "Intro",
-    "section": "Visualize post-hoc results",
-    "text": "Visualize post-hoc results\n\n\n\n\n\n\n\n\nFigure 3: Post-Hoc results"
   }
 ]

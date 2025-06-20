@@ -1,14 +1,12 @@
 project:
   type: website
   output-dir: docs
+  render: 
+    - index.qmd
   
 website:
   title: "Power of ANalysis Of VAriances in steel industry"
   navbar:
-    left:
-      - href: index.qmd
-        text: HOME
-      #- CuttingDiscs.qmd
     tools:
       - icon: github
         href: https://github.com/musbud/ANOVA-CuttingDiscs

@@ -1,5 +1,5 @@
 ---
-title: "Investigation of cutting discs efficiency via ANOVA"
+#title: "Investigation of cutting discs efficiency via ANOVA"
 format: 
   html: 
     embed-resources: true
@@ -10,7 +10,7 @@ about:
   image: img/profile.png
 ---
 
-# Intro
+# Investigation of cutting discs efficiency via ANOVA
 
 Hot rolled steel bars have to cutted in certain customer needed lenght. Different cutting disc types can be applied for this process. We are going to try - by means of ANOVA - to figure out, which of three selected cutting discs have the best efficiency / lifetime.
 
