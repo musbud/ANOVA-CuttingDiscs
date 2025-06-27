@@ -20,4 +20,4 @@ The effect of following parameters (x-values) will be investigate on the efficie
 
 Above are R/RStudio/Quarto files to reproduce the ANOVA by yourself.
 
-I have also create a website, which shows the results of ANOVA (at the top right of this page, have a look).
+Have a look in https://musbud.github.io/ANOVA-CuttingDiscs/, which shows the results of ANOVA.
