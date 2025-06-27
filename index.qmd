@@ -229,7 +229,7 @@ library(rstatix, warn.conflicts = F)
 data.post.hoc <- games_howell_test(data.cut, inefficiency ~ disc.type)
 
 # Or read the results of post-hoc test
-# data.post.hoc <- readRDS("post.hoc.rds")
+# data.post.hoc <- readRDS("data.post.hoc.rds")
 ```
 
 ## **Visualize post-hoc results**
