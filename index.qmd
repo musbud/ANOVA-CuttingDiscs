@@ -3,20 +3,15 @@
 format: 
   html: 
     embed-resources: true
-
-about:
-  id: me
-  template: broadside
-  image: img/profile.png
 ---
 
-# Investigation of cutting discs efficiency via ANOVA
+# **Investigation of cutting discs (in)efficiency via ANOVA**
 
-Hot rolled steel bars have to cutted in certain customer needed lenght. Different cutting disc types can be applied for this process. We are going to try - by means of ANOVA - to figure out, which of three selected cutting discs have the best efficiency / lifetime.
+Hot rolled steel bars must be cutted in certain customer needed length. Different cutting disc types can be applied for this process. We are going to - by means of **AN**alysisis **O**f **VA**riances - figure out, which of three selected cutting discs have the best efficiency respectively the biggest inefficiency. The **inefficiency** is measured by the **product of price times wear and tear** of **cutting discs**.
 
-The effect of following parameters (x-values) will be investigate on the efficiency (y-value) of cutting discs:
+The effect of following independent variables / process parameters (x-values) will be investigated on the inefficiency respectively on the product of price times wear and tear (y-value, dependent) of cutting discs:
 
--    Disc type
+-   Disc type
 
 -   Steel bar temperature
 
@@ -30,18 +25,17 @@ The effect of following parameters (x-values) will be investigate on the efficie
 
 -   Diameter of the steel bars
 
-# Get / Visualize Data
+# **Get data / Visualize inefficiency of cutting discs**
 
 ```{r}
 #| warning: FALSE
-#| echo: False
 #| message: False
-#| label: fig-EfficiencyDiscType
-#| fig-cap: Efficiency of disc types
+#| label: fig-InefficiencyDiscType
+#| fig-cap: Inefficiency of disc types
 #| fig-align: "center"
 #| fig-pos: "H"
-#| fig-width: 10
-#| fig-height: 8
+#| fig-width: 7
+#| fig-height: 5
 
 # load packages
 options(contrasts = c("contr.sum", "contr.poly"))
@@ -53,65 +47,67 @@ library(doParallel)
 library(foreach)
 
 # Load data set
-data.cut <- readRDS("data.cut.rds") # NOT AVAILABLE on my page!!!!
+data.cut <- readRDS("data.cut.rds") 
 
 # Plot data to see what kind of data we have
 data.cut %>% 
-  ggplot(aes(disc.type, efficiency, fill = disc.type)) + 
+  ggplot(aes(disc.type, inefficiency, fill = disc.type)) + 
   geom_boxplot(outliers = F)  +
-  theme_bw(base_size = 25) + 
+  theme_bw(base_size = 20) + 
   xlab("Disc type") +
-  scale_y_continuous("Efficiency", breaks = pretty_breaks(n = 10)) + 
+  scale_y_continuous("price * wear and tear / inefficiency [€mm]", breaks = pretty_breaks(n = 5)) + 
   stat_summary(fun.y = mean, geom = "point", shape = 20, size = 5, color = "blue", position = position_dodge(0.75), show.legend = F) +
+  coord_flip() +
   theme(
     legend.position = "none"
   )
 ```
 
-# Confidence interval
+Disc B seems to have the biggest inefficiency. The question is now: **Is this result significant?** For this purpose first of all, we will look at confidence intervals.
 
-In @fig-Confidence you can see the mean values of efficiency and the corresponding confidence intervalls (95%) for the three disc types. There are no overlaps between the the confidence intervals of disc types; it seems that the disc types differs each other in efficiency. We will proof that later via ANOVA!
+# **Confidence interval**
+
+In [Figure 2](#fig-Confidence) you can see the mean values of product of price times wear and tear and the corresponding confidence intervals (95%) for the three disc types. There are no overlaps between the confidence intervals of inefficiencies (y-value) of disc types; it seems that the disc types differs (significantly) each other. We will proof that later via ANOVA!
 
 ```{r}
-#| warning: FALSE
-#| echo: False
-#| message: False
+#| warning: false
+#| message: false
 #| label: fig-Confidence
-#| fig-cap: Confidence interval (95%) of efficiency for different disc types
+#| fig-cap: Confidence interval (95%) of inefficiency for different disc types
 #| fig-align: "center"
 #| fig-pos: "H"
-#| fig-width: 10
-#| fig-height: 8
+#| fig-width: 7
+#| fig-height: 5
 
 # Calculate confidence interval
 library(Rmisc)
 data.cut.confidence <- 
   data.cut %>%
   group_by(disc.type) %>%
-  dplyr::summarise(avg_efficiency = mean(efficiency), 
-                   uci_efficiency = CI(efficiency)[1], 
-                   lci_efficiency = CI(efficiency)[3]) 
+  dplyr::summarise(avg_inefficiency = mean(inefficiency), 
+                   uci_inefficiency = CI(inefficiency)[1], 
+                   lci_inefficiency = CI(inefficiency)[3]) 
 
 # Plot confidence interval
-ggplot(data = data.cut.confidence, aes(x = disc.type, y = avg_efficiency, color = disc.type)) +
+ggplot(data = data.cut.confidence, aes(x = disc.type, y = avg_inefficiency, color = disc.type)) +
   geom_point(size = 7) +
-  geom_errorbar(aes(ymin=uci_efficiency, ymax=lci_efficiency), size = 1, width=.2, position=position_dodge(0.05)) +
-  xlab("Disc type") + ylab("Efficiency") +
-  scale_y_continuous(breaks = pretty_breaks(n = 10)) +
-  theme_bw(base_size = 30) + 
+  geom_errorbar(aes(ymin=uci_inefficiency, ymax=lci_inefficiency), size = 1, width=.2, position=position_dodge(0.05)) +
+  xlab("Disc type") + ylab("price * wear and tear / inefficiency [€mm]") +
+  scale_y_continuous(breaks = pretty_breaks(n = 5)) +
+  theme_bw(base_size = 20) + 
+  coord_flip() +
   theme(
     legend.position = "none"
     )
 ```
 
-# Convert continuous data to categorical data
+# **Convert continuous data to categorical data**
 
 ANOVA needs continuous dependent variable and categorical independent variables. We will divide all (continuous) independent variables into four categories (quartile).
 
 ```{r}
-#| warning: FALSE
-#| echo: False
-#| message: False
+#| warning: false
+#| message: false
 
 # Calculate quartile for bar area 
 q.bar.area <- quantile(data.cut$area)
@@ -155,59 +151,60 @@ data.cut$carb.factor <- cut(data.cut$carbon, c(-Inf, 0.186, 0.365, 0.483, Inf),
                           right = F, ordered_result = T)
 ```
 
-# Levene-Test
+# **Levene-Test**
 
 Perform a levene test to proof the homogeneity of the variances - in the population - between the three groups (cutting-discs).
 
-The homogeneity of the variances are a necessary condition to perform ANOVA. According to the levene test (p \< 0.05) the variances in the population are not equal (homogeneous)! ; therefore the essential requirement to do ANOVA are not fulfilled. In this case there are alternatives like Welch-Test for one way (factor) ANOVA, but for multi-factor ANOVA there not alternatives.
+The homogeneity of the variances are a necessary condition to perform ANOVA. According to the levene test (p \< 0.05) the variances in the population are not equal (homogeneous)!; therefore the essential requirement to do ANOVA are not fulfilled. In this case there are alternatives like Welch-Test for one way (factor) ANOVA, but for multi-factor ANOVA there not alternatives.
 
 Nevertheless, ANOVA is an robust method to detect significant differences in mean-values between groups (factors), if the sample size in groups are the same respectively the sample size is bigger than 10 per group; even though the variances of population are not equal.
 
 ```{r}
-#| warning: FALSE
-#| echo: False
-#| message: False
+#| warning: false
+#| message: false
 
 # Perform levene test
-# system.time({
-#   registerDoParallel(cores = (detectCores() - 1))
-#   getDoParWorkers()
-#   getDoParName()
-# data.levene <- leveneTest(efficiency ~ disc.type * area.factor * temp.factor * diameter.factor *
-#                             circum.factor * feed.factor * carb.factor, data.cut)
-#   registerDoSEQ()
-# })
+system.time({
+  registerDoParallel(cores = (detectCores() - 1))
+  getDoParWorkers()
+  getDoParName()
+data.levene <- leveneTest(inefficiency ~ disc.type * area.factor * temp.factor * diameter.factor *
+                            circum.factor * feed.factor * carb.factor, data.cut)
+  registerDoSEQ()
+})
 
-# Or read the results of leve test
-data.levene <- readRDS("data.levene.rds")
+# save leve-test results to avoid long recalculation times
+# saveRDS(data.levene, "data.levene.rds")
+ 
+# load results of ANOVA
+# data.levene <- readRDS("data.levene.rds")
 
-# show results of levene test
-# data.levene
 # p < 0.05 --> Variances are not homogen! 
 ```
 
-# ANOVA
+# **ANOVA**
 
-According to the ANOVA there are significant differences between the mean efficiency of the cutting discs. It looks like, that the three cutting discs distinguish each other in efficiency.
-
-By means of post-hoc-test we can figure out, which cutting discs distinguish each other.
+According to the ANOVA the disc type (one of our x-value) has a significant influence on the inefficiency (y-value, price \* wear and tear). By means of post-hoc-test we can figure out, which cutting discs distinguish each other significantly.
 
 ```{r}
-#| warning: FALSE
-#| echo: False
-#| message: False
+#| warning: false
+#| message: false
 
-# Perform ANOVA
-# system.time({
-#   registerDoParallel(cores = (detectCores() - 1))
-#   getDoParWorkers()
-#   getDoParName()
-#   data.anova.res <- aov(efficiency ~ disc.type * area.factor * temp.factor * diameter.factor *
-#                           circum.factor * feed.factor * carb.factor, data.cut)
-#   registerDoSEQ()
-# })
-
-# Or read the results of ANOVA
+# Perform ANOVA (needs much time due to many factors) - you can perform it only with disc.type, area.factor and circum.factor!
+#system.time({
+#  registerDoParallel(cores = (detectCores() - 1))
+#  getDoParWorkers()
+#  getDoParName()
+#  data.anova.res <- aov(inefficiency ~ disc.type * area.factor * temp.factor *
+#                          diameter.factor * circum.factor * feed.factor * 
+#                          carb.factor, data.cut)
+#  registerDoSEQ()
+#  })
+ 
+# save ANOVA results to avoid long recalculation times
+# saveRDS(data.anova.res, "data.anova.res.rds")
+ 
+# load results of ANOVA
 data.anova.res <- readRDS("data.anova.res.rds")
 
 # summary of ANOVA
@@ -215,42 +212,47 @@ anova.res.summary <- summary(data.anova.res)
 
 # show ANOVA results
 # anova.res.summary
-
-# save ANOVA results to avoid long recalculation times
-# saveRDS(data.anova.res, "data.anova.res.rds")
 ```
 
-# Post HOC Test
+# **Post HOC Test**
 
-Because the groups have not the same variance in the population (due to levene-test), we are going to apply games-howell post-hoc test. According to the games-howell-test the efficiency of the cutting discs distinguish each other significantly!
+Because the groups have not the same variance in the population (due to levene-test), we are going to apply games-howell post-hoc test. According to the games-howell-test the inefficiency (y-value, price \* wear and tear) of all (three) cutting discs distinguish each other significantly!
 
 ```{r}
-#| warning: FALSE
-#| echo: False
-#| message: False
+#| warning: false
+#| message: false
 
 # load needed library for the post-hoc test
 library(rstatix, warn.conflicts = F)
 
 # Perform post-hoc test
-# data.post.hoc <- games_howell_test(data.cut, efficiency ~ disc.type)
+data.post.hoc <- games_howell_test(data.cut, inefficiency ~ disc.type)
 
 # Or read the results of post-hoc test
-data.post.hoc <- readRDS("post.hoc.rds")
+# data.post.hoc <- readRDS("post.hoc.rds")
 ```
 
-## Visualize post-hoc results
+## **Visualize post-hoc results**
+
+In [Figure 3](#fig-PostHoc) you can read at the x-axis the **mean differences of inefficiency with confidence intervals** of cutting discs and at the y-axis you can see to which disc types / pairs this are related.
+
+For instance is the mean differences of inefficiency between cutting disc C and B -8540€mm (mean inefficiency C minus mean efficiency B) and there confidence interval doesn’t include zero (black dashed line at x-axis).
+
+None of the confidence intervals overlaps the value of zero at the x-axis; this means **significant** differences of the cutting discs regarding the inefficiency.
+
+As we see in the boxplot before ([Figure 1](#fig-InefficiencyDiscType)), the cutting disc B is the most inefficient disc type! The most efficient cutting disc is C!
+
+But which of our seven independent variables / parameters has the most effect on the inefficiency of the cutting discs? We can answer this by means of effect size eta-squared.
 
 ```{r}
-#| warning: FALSE
-#| echo: False
-#| message: False
+#| warning: false
+#| message: false
 #| label: fig-PostHoc
 #| fig-cap: Post-Hoc results
 #| fig-align: "center"
 #| fig-pos: "H"
-#| fig-width: 10
-#| fig-height: 8
+#| fig-width: 7
+#| fig-height: 5
 
 # Define mean, min, max and p for the plot
 colnames(data.post.hoc)[4:7]<-c("mean",
@@ -260,7 +262,7 @@ colnames(data.post.hoc)[4:7]<-c("mean",
 
 
 # Create data frame for graphical depiction
-data.post.hoc <- data.frame(id = c("A - B", "A - C", "B - C"),
+data.post.hoc <- data.frame(id = c("B - A", "C - A", "C - B"),
                 mean = data.post.hoc$mean,
                 min = data.post.hoc$min,
                 max = data.post.hoc$max,
@@ -277,11 +279,12 @@ ggplot(data.post.hoc, aes(id, color = idt)) +
                     ymax = max),
                 width = 0.5,
                 size = 1.25) +
-  ylab("Delta efficiency [-]") +
   labs(x = NULL, color = NULL) +
   scale_color_manual(values = c("red","green")) +
+  scale_y_continuous("Delta inefficiency [€mm]", breaks = pretty_breaks(n = 5)) +
   coord_flip() +
-  theme_bw(base_size = 25) +
+  theme_bw(base_size = 20) +
+  geom_hline(yintercept = 0, linetype = "dashed", color = "black", size = 1) +
   theme(
     legend.title = element_blank(),
     legend.position = c(.95, 0.95),
@@ -291,9 +294,9 @@ ggplot(data.post.hoc, aes(id, color = idt)) +
     )
 ```
 
-# Eta-squared (effect size)
+# **Eta-squared (effect size)**
 
-Due to eta-squared the area of cutted bars has the biggest influence on the efficiency / lifetime of cutting discs! But the disc type and circumferential speed of the cutting machine has also an - albeit a small - effect on efficiency / lifetime.
+Due to eta-squared the area of cutted bars has the biggest influence on the (in)efficiency of cutting discs! But the disc type and circumferential speed of the cutting machine has also an - albeit a small - effect on (in)efficiency.
 
 ```{r}
 #| warning: FALSE
@@ -303,8 +306,8 @@ Due to eta-squared the area of cutted bars has the biggest influence on the effi
 #| fig-cap: Eta squared
 #| fig-align: "center"
 #| fig-pos: "H"
-#| fig-width: 10
-#| fig-height: 8
+#| fig-width: 7
+#| fig-height: 5
 
 # Calculate eta squered and make data frame
 eta.effect <- 
@@ -320,9 +323,9 @@ eta.effect <-
   rownames_to_column(var = "process parameters [-]") 
   
 eta.effect %>% filter(`eta squared` > 0.02) %>%
-  ggplot(aes(x = `process parameters [-]`, y = `eta squared`, color = `process parameters [-]`)) + geom_point(size = 10) + xlab("") + 
+  ggplot(aes(x = `process parameters [-]`, y = `eta squared`, color = `process parameters [-]`)) + geom_point(size = 7) + xlab("") + 
   ylab("Eta squared [-]") + scale_color_manual(values = c("red", "green", "blue")) + scale_y_continuous(breaks=pretty_breaks(n=10)) +
-  theme_bw(base_size = 25) + theme(
+  theme_bw(base_size = 20) + theme(
     legend.position = "none"
   )
 ```
